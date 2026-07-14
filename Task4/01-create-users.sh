@@ -24,8 +24,9 @@ create_user() {
     cert_public="$(openssl x509 -in "${cert}" -pubkey -noout 2>/dev/null)" || { echo "${user}: сертификат повреждён; восстановите комплект из резервной копии или удалите key/cert" >&2; return 1; }
     [[ "${key_public}" == "${cert_public}" ]] || { echo "${user}: ключ и сертификат не образуют пару; восстановите или удалите оба файла" >&2; return 1; }
     subject="$(openssl x509 -in "${cert}" -noout -subject -nameopt RFC2253)"
-    [[ "${subject}" == *"CN=${user}"* && "${subject}" == *"O=${group}"* ]] || { echo "${user}: subject сертификата не совпадает с CN/O; восстановите или удалите комплект" >&2; return 1; }
+    [[ "${subject}" == "subject=O=${group},CN=${user}" ]] || { echo "${user}: subject сертификата не совпадает с точным CN/O; восстановите или удалите комплект" >&2; return 1; }
     openssl x509 -in "${cert}" -checkend 0 -noout >/dev/null || { echo "${user}: сертификат истёк; удалите cert и key для безопасного перевыпуска" >&2; return 1; }
+    openssl x509 -in "${cert}" -purpose -noout | grep -q '^SSL client : Yes$' || { echo "${user}: сертификат не разрешён для client authentication" >&2; return 1; }
     echo "${user}: существующий комплект key/cert проверен"
   elif [[ -e "${key}" || -e "${cert}" ]]; then
     echo "${user}: найден неполный комплект key/cert; восстановите отсутствующий файл из резервной копии или удалите оба для перевыпуска" >&2

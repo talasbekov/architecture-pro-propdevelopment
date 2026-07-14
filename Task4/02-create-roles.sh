@@ -39,14 +39,20 @@ metadata:
   name: platform-operator
 rules:
   - apiGroups: [""]
-    resources: ["namespaces", "nodes", "persistentvolumes"]
-    verbs: ["get", "list", "watch"]
-  - apiGroups: [""]
     resources: ["configmaps", "endpoints", "events", "persistentvolumeclaims", "pods", "pods/log", "services"]
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
   - apiGroups: ["apps", "batch", "networking.k8s.io"]
     resources: ["daemonsets", "deployments", "replicasets", "statefulsets", "cronjobs", "jobs", "ingresses", "networkpolicies"]
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: platform-operator-cluster-reader
+rules:
+  - apiGroups: [""]
+    resources: ["namespaces", "nodes", "persistentvolumes"]
+    verbs: ["get", "list", "watch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -85,6 +91,57 @@ rules:
     resources: ["namespaces"]
     resourceNames: ["propdevelopment"]
     verbs: ["patch"]
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: propdevelopment-psa-labels-only
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["UPDATE"]
+        resources: ["namespaces"]
+  matchConditions:
+    - name: propdevelopment-only
+      expression: object.metadata.name == 'propdevelopment'
+  validations:
+    - expression: >-
+        object.metadata.name == oldObject.metadata.name &&
+        object.metadata.generateName == oldObject.metadata.generateName &&
+        object.metadata.namespace == oldObject.metadata.namespace &&
+        object.metadata.annotations == oldObject.metadata.annotations &&
+        object.metadata.finalizers == oldObject.metadata.finalizers &&
+        object.metadata.ownerReferences == oldObject.metadata.ownerReferences &&
+        object.metadata.deletionTimestamp == oldObject.metadata.deletionTimestamp &&
+        object.metadata.deletionGracePeriodSeconds == oldObject.metadata.deletionGracePeriodSeconds &&
+        object.metadata.labels.filter(k, v, !(k in [
+          'pod-security.kubernetes.io/enforce',
+          'pod-security.kubernetes.io/enforce-version',
+          'pod-security.kubernetes.io/audit',
+          'pod-security.kubernetes.io/audit-version',
+          'pod-security.kubernetes.io/warn',
+          'pod-security.kubernetes.io/warn-version'
+        ])) == oldObject.metadata.labels.filter(k, v, !(k in [
+          'pod-security.kubernetes.io/enforce',
+          'pod-security.kubernetes.io/enforce-version',
+          'pod-security.kubernetes.io/audit',
+          'pod-security.kubernetes.io/audit-version',
+          'pod-security.kubernetes.io/warn',
+          'pod-security.kubernetes.io/warn-version'
+        ])) &&
+        object.spec == oldObject.spec && object.status == oldObject.status
+      message: Разрешено изменять только стандартные метки Pod Security Admission.
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: propdevelopment-psa-labels-only
+spec:
+  policyName: propdevelopment-psa-labels-only
+  validationActions: [Deny]
 YAML
 }
 

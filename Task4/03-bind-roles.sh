@@ -18,13 +18,30 @@ subjects:
     apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: RoleBinding
 metadata:
   name: propdevelopment-platform-operators
+  namespace: propdevelopment
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: platform-operator
+subjects:
+  - kind: Group
+    name: platform-operators
+    apiGroup: rbac.authorization.k8s.io
+  - kind: User
+    name: operator1
+    apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: propdevelopment-platform-operator-cluster-readers
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: platform-operator-cluster-reader
 subjects:
   - kind: Group
     name: platform-operators
