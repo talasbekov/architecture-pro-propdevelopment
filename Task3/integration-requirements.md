@@ -30,7 +30,7 @@
 
 ## 5. Взаимодействие и надёжность
 
-1. Мобильное приложение получает OIDC access token и отправляет команду с `request_id` и `Idempotency-Key` в API Gateway по HTTPS REST.
+1. Мобильное приложение получает OAuth 2.0 access token через OIDC Authorization Code Flow с PKCE и отправляет команду с `request_id` и `Idempotency-Key` в API Gateway по HTTPS REST. ID token для авторизации API не используется.
 2. Gateway проверяет токен, rate limit и базовые scopes; tenant-core-app подтверждает принадлежность пользователя к УК/дому/помещению.
 3. Smart Home Integration Service запрашивает у Consent & Access Registry действующее согласие и разрешение для конкретного субъекта, устройства, действия и времени. При отсутствии однозначного разрешения действует fail closed.
 4. Только после положительного решения сервис создаёт отдельный M2M-токен и отправляет партнёру минимальную команду по HTTPS REST с mTLS. Пользовательский токен и лишние персональные данные наружу не передаются.
