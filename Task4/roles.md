@@ -1,11 +1,11 @@
 # Ролевая модель Kubernetes для PropDevelopment
 
-| Роль | Права | Группы |
+| Роль | Права роли | Группы пользователей |
 |---|---|---|
-| `cluster-viewer` | Чтение основных ресурсов кластера и workload-ресурсов без доступа к Secrets и объектам RBAC | `propdevelopment-viewers` |
-| `namespace-developer` | Создание и сопровождение приложений, Services, ConfigMaps, Jobs и PVC только в namespace `propdevelopment`; Secrets и RBAC недоступны | `propdevelopment-developers` |
-| `platform-operator` | Эксплуатация узлов, namespaces и workload-ресурсов во всём кластере; без Secrets, RBAC и выдачи привилегий | `propdevelopment-platform-operators` |
-| `security-secret-reader` | Только чтение заранее определённых Secrets `application-tls` и `integration-credentials` в namespace `propdevelopment` | `propdevelopment-security-auditors` |
-| `limited-security-admin` | Управление NetworkPolicy, ResourceQuota и LimitRange только в namespace `propdevelopment`; без Secrets и RBAC | `propdevelopment-security-admins` |
+| `cluster-viewer` | Чтение основных ресурсов кластера и workload-ресурсов без доступа к Secrets и объектам RBAC | Наблюдатели и аудиторы платформы — группа `viewers` |
+| `namespace-developer` | Создание и сопровождение приложений, Services, ConfigMaps, Jobs и PVC только в namespace `propdevelopment`; Secrets и RBAC недоступны | Разработчики PropDevelopment — группа `developers`, пользователь `developer1` |
+| `platform-operator` | Чтение узлов, namespaces и постоянных томов; эксплуатация namespaced workload-ресурсов во всём кластере без изменения узлов, PV и namespaces | Инженеры эксплуатации — группа `platform-operators`, пользователь `operator1` |
+| `security-secret-reader` | `get` и ограниченный `list` только для Secrets `application-tls` и `integration-credentials` в namespace `propdevelopment` | Аудиторы ИБ — группа `security-auditors` |
+| `limited-security-admin` | Чтение событий, ConfigMaps, ServiceAccounts и журналов Pods; управление NetworkPolicy только в `propdevelopment` | Администраторы ИБ — группа `security-admins` |
 
-Роли следуют принципу минимальных привилегий. Ни одна из них не выдаёт `bind`, `escalate`, `impersonate`, wildcard-права или доступ к `cluster-admin`. Создание и изменение объектов RBAC остаётся отдельной административной процедурой.
+Роли следуют принципу минимальных привилегий. Для `list` Secrets API-запрос обязан использовать field selector по разрешённому имени, иначе Kubernetes его отклонит из-за `resourceNames`. Ни одна роль не выдаёт `bind`, `escalate`, `impersonate`, wildcard-права или доступ к `cluster-admin`. Изменение RBAC и меток Pod Security namespace выполняется отдельным управляемым процессом с admission-контролем.

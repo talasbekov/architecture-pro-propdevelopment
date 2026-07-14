@@ -39,7 +39,10 @@ metadata:
   name: platform-operator
 rules:
   - apiGroups: [""]
-    resources: ["configmaps", "endpoints", "events", "namespaces", "nodes", "persistentvolumeclaims", "persistentvolumes", "pods", "pods/log", "services"]
+    resources: ["namespaces", "nodes", "persistentvolumes"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["configmaps", "endpoints", "events", "persistentvolumeclaims", "pods", "pods/log", "services"]
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
   - apiGroups: ["apps", "batch", "networking.k8s.io"]
     resources: ["daemonsets", "deployments", "replicasets", "statefulsets", "cronjobs", "jobs", "ingresses", "networkpolicies"]
@@ -53,7 +56,7 @@ rules:
   - apiGroups: [""]
     resources: ["secrets"]
     resourceNames: ["application-tls", "integration-credentials"]
-    verbs: ["get"]
+    verbs: ["get", "list"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -64,8 +67,11 @@ rules:
     resources: ["networkpolicies"]
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
   - apiGroups: [""]
-    resources: ["resourcequotas", "limitranges"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+    resources: ["configmaps", "events", "pods", "pods/log", "serviceaccounts"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get", "list", "watch"]
 YAML
 }
 

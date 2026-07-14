@@ -14,7 +14,7 @@ roleRef:
   name: cluster-viewer
 subjects:
   - kind: Group
-    name: propdevelopment-viewers
+    name: viewers
     apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -27,7 +27,10 @@ roleRef:
   name: platform-operator
 subjects:
   - kind: Group
-    name: propdevelopment-platform-operators
+    name: platform-operators
+    apiGroup: rbac.authorization.k8s.io
+  - kind: User
+    name: operator1
     apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -41,7 +44,10 @@ roleRef:
   name: namespace-developer
 subjects:
   - kind: Group
-    name: propdevelopment-developers
+    name: developers
+    apiGroup: rbac.authorization.k8s.io
+  - kind: User
+    name: developer1
     apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -55,7 +61,7 @@ roleRef:
   name: security-secret-reader
 subjects:
   - kind: Group
-    name: propdevelopment-security-auditors
+    name: security-auditors
     apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -69,7 +75,7 @@ roleRef:
   name: limited-security-admin
 subjects:
   - kind: Group
-    name: propdevelopment-security-admins
+    name: security-admins
     apiGroup: rbac.authorization.k8s.io
 YAML
 }
