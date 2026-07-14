@@ -26,7 +26,9 @@
 
 ### Task4 — Kubernetes RBAC
 
-Сформировать роли просмотра, разработчика в выделенном namespace, оператора и ограниченного администратора безопасности. Отдельно ограничить чтение Secrets и изменение RBAC. Подготовить таблицу и три идемпотентных Bash-скрипта: создание пользователей/учётных данных, создание ролей и привязка субъектов. Скрипты должны явно показывать создаваемые ресурсы и не встраивать постоянные закрытые ключи в репозиторий.
+Заполнить Markdown-таблицу по предоставленному шаблону и связать роли с организационными группами PropDevelopment. Обязательный минимум: viewer; группа, которая настраивает ресурсы кластера; привилегированная группа с контролируемым чтением Secrets. Дополнительно выделить разработчика в namespace и ограниченного администратора безопасности. Изменение RBAC и создание привязок к `cluster-admin` не входят в обычные роли, чтобы исключить эскалацию.
+
+Создать не менее двух конкретных пользователей. Поскольку в Kubernetes нет API-объекта User, первый Bash-скрипт формирует ключи, CSR/сертификаты и kubeconfig локально, не добавляя закрытые ключи в Git. Второй скрипт создаёт Role/ClusterRole, третий — RoleBinding/ClusterRoleBinding. Скрипты должны быть повторяемыми и явно показывать создаваемые ресурсы.
 
 ### Task5 — NetworkPolicy
 
@@ -34,13 +36,15 @@
 
 ### Task6 — аудит Kubernetes
 
-Подготовить `analysis.md`, Bash-скрипт фильтрации JSON Lines и `audit-extract.json`. Скрипт выявляет чтение Secrets, привилегированные поды, `pods/exec`, опасные RoleBinding/ClusterRoleBinding и попытки изменения audit policy. Поскольку исходный `audit.log` отсутствует, пример выжимки создаётся как валидный демонстрационный набор событий по сценарию задания. Это ограничение явно указывается в отчёте; скрипт остаётся пригодным для настоящего лога.
+Подготовить `analysis.md`, Bash-скрипт фильтрации JSON Lines и `audit-extract.json`. Скрипт принимает путь к внешнему `audit.log` и выявляет чтение Secrets, привилегированные поды, `pods/exec`, опасные RoleBinding/ClusterRoleBinding и упоминания audit policy.
+
+Поскольку исходный `audit.log` отсутствует, `audit-extract.json` оформляется как synthetic/demo fixture по ожидаемым API-событиям сценария, а не как доказанная выжимка реального инцидента. Происхождение данных и разделение ожидаемых и фактически подтверждённых событий явно указываются в `analysis.md` и README. Команда `kubectl delete -f /etc/kubernetes/audit-policy.yaml` не удаляет Kubernetes API-ресурс Audit Policy и может завершиться до появления подходящего audit-события; это описывается как неподтверждённая попытка и ограничение учебного сценария, без фабрикации якобы наблюдавшегося события.
 
 ### Task7 — безопасность контейнеров
 
-Создать namespace с PodSecurity `restricted`, три намеренно небезопасных и три исправленных манифеста. Безопасные варианты используют non-root UID, `allowPrivilegeEscalation: false`, drop capabilities, seccomp RuntimeDefault, read-only root filesystem и временные writable volumes там, где они нужны Nginx.
+Файл `01-create-namespace.yaml` создаёт namespace `audit-zone` с меткой `pod-security.kubernetes.io/enforce: restricted`. В `insecure-manifests/` находятся `01-privileged-pod.yaml`, `02-hostpath-pod.yaml`, `03-root-user-pod.yaml`; в `secure-manifests/` — `01-secure.yaml`, `02-secure.yaml`, `03-secure.yaml`. Безопасные варианты используют non-root UID, `allowPrivilegeEscalation: false`, drop capabilities, seccomp RuntimeDefault, read-only root filesystem и временные writable volumes там, где они нужны Nginx.
 
-Gatekeeper включает три требуемых ConstraintTemplate: запрет privileged, запрет hostPath и обязательные `runAsNonRoot` вместе с `readOnlyRootFilesystem`. Скрипты проверки демонстрируют отклонение небезопасных и принятие безопасных ресурсов, не считая ожидаемые отклонения ошибкой всего теста.
+В `gatekeeper/constraint-templates/` находятся `privileged.yaml`, `hostpath.yaml`, `runasnonroot.yaml`, а одноимённые ограничения — в `gatekeeper/constraints/`. Три правила запрещают privileged и hostPath и требуют одновременно `runAsNonRoot: true` и `readOnlyRootFilesystem: true`. В `verify/` находятся `verify-admission.sh` и `validate-security.sh`, которые демонстрируют отклонение небезопасных и принятие безопасных ресурсов, не считая ожидаемые отклонения ошибкой всего теста. В корне Task7 также обязательны `audit-policy.yaml` и `README_FOR_REVIEWER.md` с порядком применения и проверки.
 
 ## Проверка
 
