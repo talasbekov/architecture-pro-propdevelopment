@@ -119,14 +119,14 @@ spec:
         object.metadata.ownerReferences == oldObject.metadata.ownerReferences &&
         object.metadata.deletionTimestamp == oldObject.metadata.deletionTimestamp &&
         object.metadata.deletionGracePeriodSeconds == oldObject.metadata.deletionGracePeriodSeconds &&
-        object.metadata.labels.filter(k, v, !(k in [
+        object.metadata.labels.filter(k, !(k in [
           'pod-security.kubernetes.io/enforce',
           'pod-security.kubernetes.io/enforce-version',
           'pod-security.kubernetes.io/audit',
           'pod-security.kubernetes.io/audit-version',
           'pod-security.kubernetes.io/warn',
           'pod-security.kubernetes.io/warn-version'
-        ])) == oldObject.metadata.labels.filter(k, v, !(k in [
+        ])) == oldObject.metadata.labels.filter(k, !(k in [
           'pod-security.kubernetes.io/enforce',
           'pod-security.kubernetes.io/enforce-version',
           'pod-security.kubernetes.io/audit',
