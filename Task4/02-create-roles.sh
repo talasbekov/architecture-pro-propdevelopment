@@ -107,6 +107,8 @@ spec:
   matchConditions:
     - name: propdevelopment-only
       expression: object.metadata.name == 'propdevelopment'
+    - name: security-group-only
+      expression: "'security' in request.userInfo.groups"
   validations:
     - expression: >-
         object.metadata.name == oldObject.metadata.name &&
