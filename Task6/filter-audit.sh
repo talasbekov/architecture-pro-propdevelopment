@@ -46,6 +46,16 @@ jq -s '
     or
     ((tostring | ascii_downcase) | contains("audit-policy"))
   ))
+  | map(
+      if ((tostring | ascii_downcase) | contains("audit-policy")) then
+        ._propdevelopment = ((._propdevelopment // {}) + {
+          indicator: "audit-policy",
+          classification: "mention"
+        })
+      else
+        .
+      end
+    )
 ' "$validated" >"$result"
 
 mkdir -p "$(dirname "$output")"
