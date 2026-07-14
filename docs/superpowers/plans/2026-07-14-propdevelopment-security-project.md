@@ -6,7 +6,7 @@
 
 **Architecture:** Репозиторий состоит из семи независимых каталогов с диаграммами, Markdown-документами, Kubernetes-манифестами и Bash-скриптами. Общий README связывает решения, описывает исходные данные и команды проверки; каждый технический артефакт проверяется локально без зависимости от публикации в GitHub.
 
-**Tech Stack:** draw.io XML, Markdown, Kubernetes YAML, Bash, `kubectl`, `minikube`, `jq`, Python standard library для структурных проверок.
+**Tech Stack:** draw.io XML, Markdown, Kubernetes YAML, Bash, `kubectl`, `minikube`, `jq`, Dockerized `yq`, Python standard library для структурных проверок.
 
 ---
 
@@ -55,7 +55,9 @@ Expected: exit code 0.
 
 - [ ] **Step 3: Commit**
 
-Run: `git status --short && git add README.md Task1 Task2 Task3 Task4 Task5 Task6 Task7 && git commit -m "chore: scaffold sprint project"`
+Run: `git status --short && git add README.md && git commit -m "chore: scaffold sprint project"`
+
+Expected: коммит содержит только README; пустые Task-каталоги появятся в Git вместе с артефактами следующих задач.
 
 ### Task 2: Mind map классификации данных
 
@@ -256,7 +258,7 @@ Expected: скрипт сообщает номер некорректной ст
 
 - [ ] **Step 7: Commit**
 
-Run: `git add Task6 && git commit -m "feat: add Kubernetes audit incident analysis"`
+Run: `git status --short && git add README.md Task6/analysis.md Task6/audit-extract.json Task6/filter-audit.sh && git commit -m "feat: add Kubernetes audit incident analysis"`
 
 ### Task 8: PodSecurity и Gatekeeper
 
@@ -289,7 +291,7 @@ Rego просматривает все containers/initContainers/ephemeralContai
 
 - [ ] **Step 4: Написать audit policy и PSA-проверку**
 
-`verify-admission.sh` в `audit-zone` проверяет ожидаемые PSA reject/accept через server dry-run, затем разворачивает безопасные Pods и ждёт Ready. `audit-policy.yaml` проверять как kube-apiserver config через Python YAML parser и, при интеграционной проверке, запуск Minikube с `--extra-config=apiserver.audit-policy-file=...`, но никогда через `kubectl apply`.
+`verify-admission.sh` в `audit-zone` проверяет ожидаемые PSA reject/accept через server dry-run, затем разворачивает безопасные Pods и ждёт Ready. `audit-policy.yaml` проверять как конфигурационный YAML через version-pinned Dockerized yq, но никогда через `kubectl apply`. Интеграционный запуск API server с этой политикой не входит в обязательную локальную проверку: он требует отдельного mount/copy в Minikube node и audit-log flags.
 
 - [ ] **Step 5: Написать отдельную Gatekeeper-проверку**
 
@@ -297,13 +299,13 @@ Rego просматривает все containers/initContainers/ephemeralContai
 
 - [ ] **Step 6: Проверить синтаксис и core manifests**
 
-Run: `bash -n Task7/verify/*.sh && kubectl apply --dry-run=client -f Task7/01-create-namespace.yaml -f Task7/insecure-manifests -f Task7/secure-manifests && python3 -c 'import yaml; yaml.safe_load(open("Task7/audit-policy.yaml"))'`
-Expected: shell/core manifests/audit config parse. Если PyYAML отсутствует, использовать Ruby `YAML.safe_load_file` либо установить локальный checker; не применять Audit Policy через API.
+Run: `bash -n Task7/verify/*.sh && kubectl apply --dry-run=client -f Task7/01-create-namespace.yaml -f Task7/insecure-manifests -f Task7/secure-manifests && docker run --rm -v "$PWD:/work" mikefarah/yq:4.44.3 eval '.apiVersion == "audit.k8s.io/v1" and .kind == "Policy" and (.rules | length > 0)' /work/Task7/audit-policy.yaml | grep -qx true`
+Expected: shell/core manifests/audit config parse and semantic check returns `true`.
 
 - [ ] **Step 7: Установить Gatekeeper и проверить CRD-aware manifests**
 
-Run: `kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/v3.17.1/deploy/gatekeeper.yaml && kubectl -n gatekeeper-system rollout status deploy/gatekeeper-controller-manager --timeout=300s && kubectl apply --dry-run=server -f Task7/gatekeeper/constraint-templates && kubectl apply --dry-run=server -f Task7/gatekeeper/constraints`
-Expected: controller ready; templates and constraints accepted by server dry-run.
+Run: `kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/v3.17.1/deploy/gatekeeper.yaml && kubectl -n gatekeeper-system rollout status deploy/gatekeeper-controller-manager --timeout=300s && kubectl apply -f Task7/gatekeeper/constraint-templates && kubectl wait --for=condition=Established crd/k8sdenyprivileged.constraints.gatekeeper.sh crd/k8sdenyhostpath.constraints.gatekeeper.sh crd/k8srequirenonrootreadonly.constraints.gatekeeper.sh --timeout=180s && kubectl apply --dry-run=server -f Task7/gatekeeper/constraints`
+Expected: controller ready; templates persist, три generated CRD Established, constraints accepted by server dry-run. После проверки удаляются только созданные constraints/templates и тестовый namespace; установка Gatekeeper сохраняется, если пользователь не запросил её удаление.
 
 - [ ] **Step 8: Commit**
 
