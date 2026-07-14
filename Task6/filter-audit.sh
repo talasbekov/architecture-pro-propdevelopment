@@ -14,10 +14,20 @@ if [[ ! -r "$input" ]]; then
   exit 66
 fi
 
+output_dir=$(dirname "$output")
+output_name=$(basename "$output")
+mkdir -p "$output_dir"
+
 workdir=$(mktemp -d)
-trap 'rm -rf "$workdir"' EXIT
+output_temp=""
+cleanup() {
+  rm -rf "$workdir"
+  if [[ -n "$output_temp" ]]; then
+    rm -f "$output_temp"
+  fi
+}
+trap cleanup EXIT
 validated="$workdir/validated.jsonl"
-result="$workdir/result.json"
 
 : >"$validated"
 line_number=0
@@ -30,12 +40,30 @@ while IFS= read -r line || [[ -n "$line" ]]; do
   printf '%s\n' "$line" >>"$validated"
 done <"$input"
 
+output_temp=$(mktemp "$output_dir/.${output_name}.tmp.XXXXXX")
 jq -s '
+  def contains_audit_policy:
+    any(.. | strings; ascii_downcase | contains("audit-policy"));
+  def audit_policy_mention:
+    [
+      .objectRef?.name?,
+      .objectRef?.resource?,
+      .objectRef?.subresource?,
+      .requestURI?,
+      .requestObject?.metadata?.name?,
+      .requestObject?.path?,
+      .requestObject?.command?,
+      .requestObject?.args?
+    ] | any(.[]; contains_audit_policy);
   map(select(
     (.verb? == "get" and .objectRef?.resource? == "secrets")
     or
     (.verb? == "create" and .objectRef?.resource? == "pods" and
-      any((.requestObject?.spec?.containers? // [])[]?; .securityContext?.privileged? == true))
+      any((
+        ((.requestObject?.spec?.containers? // [])
+          + (.requestObject?.spec?.initContainers? // [])
+          + (.requestObject?.spec?.ephemeralContainers? // []))[]?
+      ); .securityContext?.privileged? == true))
     or
     (.verb? == "create" and .objectRef?.resource? == "pods" and .objectRef?.subresource? == "exec")
     or
@@ -44,10 +72,10 @@ jq -s '
       .requestObject?.roleRef?.kind? == "ClusterRole" and
       .requestObject?.roleRef?.name? == "cluster-admin")
     or
-    ((tostring | ascii_downcase) | contains("audit-policy"))
+    audit_policy_mention
   ))
   | map(
-      if ((tostring | ascii_downcase) | contains("audit-policy")) then
+      if audit_policy_mention then
         ._propdevelopment = ((._propdevelopment // {}) + {
           indicator: "audit-policy",
           classification: "mention"
@@ -56,7 +84,7 @@ jq -s '
         .
       end
     )
-' "$validated" >"$result"
-
-mkdir -p "$(dirname "$output")"
-mv "$result" "$output"
+' "$validated" >"$output_temp"
+jq empty "$output_temp"
+mv "$output_temp" "$output"
+output_temp=""
