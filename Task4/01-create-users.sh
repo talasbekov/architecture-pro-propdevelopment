@@ -78,7 +78,7 @@ EOF
     rm -rf "${temp_dir}"
   fi
 
-  local context cluster server ca_data insecure
+  local context cluster server ca_data insecure ca_file
   context="$(kubectl config current-context)"
   cluster="$(kubectl config view --minify -o jsonpath='{.contexts[0].context.cluster}')"
   server="$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}')"
@@ -87,7 +87,11 @@ EOF
   insecure="$(kubectl config view --raw --minify -o jsonpath='{.clusters[0].cluster.insecure-skip-tls-verify}')"
   local -a cluster_args=(--server="${server}")
   if [[ -n "${ca_data}" ]]; then
-    cluster_args+=(--certificate-authority-data="${ca_data}")
+    ca_file="$(mktemp "${CREDENTIALS_DIR}/.cluster-ca.XXXXXX")"
+    trap 'rm -f "${ca_file}"' RETURN
+    printf '%s' "${ca_data}" | base64 --decode > "${ca_file}"
+    chmod 600 "${ca_file}"
+    cluster_args+=(--certificate-authority="${ca_file}" --embed-certs=true)
   elif [[ "${ALLOW_INSECURE_SKIP_TLS_VERIFY:-false}" == "true" && "${insecure}" == "true" ]]; then
     cluster_args+=(--insecure-skip-tls-verify=true)
   else
@@ -95,6 +99,10 @@ EOF
     return 1
   fi
   kubectl config --kubeconfig="${kubeconfig}" set-cluster "${cluster}" "${cluster_args[@]}" >/dev/null
+  if [[ -n "${ca_file:-}" ]]; then
+    trap - RETURN
+    rm -f "${ca_file}"
+  fi
   kubectl config --kubeconfig="${kubeconfig}" set-credentials "${user}" --client-certificate="${cert}" --client-key="${key}" --embed-certs=true >/dev/null
   kubectl config --kubeconfig="${kubeconfig}" set-context "${context}" --cluster="${cluster}" --user="${user}" --namespace=propdevelopment >/dev/null
   kubectl config --kubeconfig="${kubeconfig}" use-context "${context}" >/dev/null

@@ -61,7 +61,7 @@ roleRef:
   name: security-secret-reader
 subjects:
   - kind: Group
-    name: security-auditors
+    name: security
     apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -75,7 +75,20 @@ roleRef:
   name: limited-security-admin
 subjects:
   - kind: Group
-    name: security-admins
+    name: security
+    apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: propdevelopment-limited-security-admins-psa
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: limited-security-admin-psa
+subjects:
+  - kind: Group
+    name: security
     apiGroup: rbac.authorization.k8s.io
 YAML
 }
