@@ -1,0 +1,79 @@
+<mxfile host="app.diagrams.net" modified="2026-07-14T00:00:00.000Z" agent="Codex" version="24.7.17" type="device" compressed="false">
+  <diagram id="propdevelopment-data-security" name="Классификация данных">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="center" value="&lt;b&gt;Безопасность данных&lt;/b&gt;&lt;br&gt;PropDevelopment" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1F4E78;fontColor=#FFFFFF;strokeColor=#163A5C;strokeWidth=3;fontSize=20;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="745" y="485" width="250" height="100" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="public" value="&lt;b&gt;Публичные данные&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;strokeWidth=3;fontSize=17;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="95" y="130" width="250" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="pub1" value="&lt;b&gt;Описания и цены объектов&lt;/b&gt;&lt;br&gt;• Искажение — &lt;b&gt;значительный&lt;/b&gt;: вводит клиента в заблуждение и срывает сделку.&lt;br&gt;• Некачественные данные — &lt;b&gt;значительный&lt;/b&gt;: устаревшая цена снижает доверие." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FAEF;strokeColor=#82B366;fontSize=13;spacing=8;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="20" y="225" width="350" height="125" as="geometry"/>
+        </mxCell>
+        <mxCell id="pub2" value="&lt;b&gt;Публичные новости и контакты офисов&lt;/b&gt;&lt;br&gt;• Потеря — &lt;b&gt;незначительный&lt;/b&gt;: сведения можно восстановить и опубликовать повторно.&lt;br&gt;• Обесценивание — &lt;b&gt;значительный&lt;/b&gt;: просроченные новости и контакты теряют пользу." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FAEF;strokeColor=#82B366;fontSize=13;spacing=8;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="20" y="370" width="350" height="125" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="internal" value="&lt;b&gt;Внутренние данные&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;strokeWidth=3;fontSize=17;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="95" y="700" width="250" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="int1" value="&lt;b&gt;Планы ремонтов и история работ&lt;/b&gt;&lt;br&gt;• Потеря — &lt;b&gt;значительный&lt;/b&gt;: нарушает планирование и подтверждение выполненных работ.&lt;br&gt;• Искажение — &lt;b&gt;значительный&lt;/b&gt;: ведёт к ошибочным срокам и затратам." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF5FF;strokeColor=#6C8EBF;fontSize=13;spacing=8;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="20" y="795" width="350" height="125" as="geometry"/>
+        </mxCell>
+        <mxCell id="int2" value="&lt;b&gt;Технические данные объектов&lt;/b&gt;&lt;br&gt;• Утечка — &lt;b&gt;значительный&lt;/b&gt;: раскрывает внутреннее устройство и уязвимые места.&lt;br&gt;• Некачественные данные — &lt;b&gt;критический&lt;/b&gt;: ошибка может привести к опасному решению при эксплуатации." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF5FF;strokeColor=#6C8EBF;fontSize=13;spacing=8;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="20" y="940" width="350" height="125" as="geometry"/>
+        </mxCell>
+        <mxCell id="int3" value="&lt;b&gt;Аналитика спроса и загрузки&lt;/b&gt;&lt;br&gt;• Утечка — &lt;b&gt;значительный&lt;/b&gt;: даёт конкурентам сведения о бизнесе.&lt;br&gt;• Обесценивание — &lt;b&gt;незначительный&lt;/b&gt;: старые срезы быстро теряют актуальность." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF5FF;strokeColor=#6C8EBF;fontSize=13;spacing=8;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="390" y="940" width="350" height="125" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="confidential" value="&lt;b&gt;Конфиденциальные данные&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;strokeWidth=3;fontSize=17;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1395" y="130" width="300" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="conf1" value="&lt;b&gt;ФИО, телефон и email клиента&lt;/b&gt;&lt;br&gt;• Утечка — &lt;b&gt;критический&lt;/b&gt;: нарушает приватность и создаёт риск мошенничества.&lt;br&gt;• Искажение — &lt;b&gt;значительный&lt;/b&gt;: связь и идентификация клиента становятся ошибочными." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9E6;strokeColor=#D6B656;fontSize=13;spacing=8;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="225" width="380" height="125" as="geometry"/>
+        </mxCell>
+        <mxCell id="conf2" value="&lt;b&gt;Договорные и платёжные данные&lt;/b&gt;&lt;br&gt;• Утечка — &lt;b&gt;критический&lt;/b&gt;: возможны финансовый ущерб и юридические последствия.&lt;br&gt;• Потеря — &lt;b&gt;критический&lt;/b&gt;: невозможно подтвердить расчёты и обязательства." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9E6;strokeColor=#D6B656;fontSize=13;spacing=8;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="370" width="380" height="125" as="geometry"/>
+        </mxCell>
+        <mxCell id="conf3" value="&lt;b&gt;История бронирований и осмотров&lt;/b&gt;&lt;br&gt;• Утечка — &lt;b&gt;значительный&lt;/b&gt;: раскрывает интересы и перемещения клиента.&lt;br&gt;• Некачественные данные — &lt;b&gt;значительный&lt;/b&gt;: вызывает накладки и неверные решения менеджера." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9E6;strokeColor=#D6B656;fontSize=13;spacing=8;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="225" width="350" height="125" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="secret" value="&lt;b&gt;Секретные данные&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;strokeWidth=3;fontSize=17;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1395" y="700" width="300" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="sec1" value="&lt;b&gt;Биометрические шаблоны лица&lt;/b&gt;&lt;br&gt;• Утечка — &lt;b&gt;критический&lt;/b&gt;: биометрию нельзя безопасно заменить как пароль.&lt;br&gt;• Искажение — &lt;b&gt;критический&lt;/b&gt;: возможны отказ доступа или ложное распознавание." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDEEEE;strokeColor=#B85450;fontSize=13;spacing=8;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="795" width="380" height="125" as="geometry"/>
+        </mxCell>
+        <mxCell id="sec2" value="&lt;b&gt;Credentials, API keys и tokens&lt;/b&gt;&lt;br&gt;• Утечка — &lt;b&gt;критический&lt;/b&gt;: даёт злоумышленнику доступ к системам и данным.&lt;br&gt;• Потеря — &lt;b&gt;критический&lt;/b&gt;: останавливает интеграции и работу сервисов." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDEEEE;strokeColor=#B85450;fontSize=13;spacing=8;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="940" width="380" height="125" as="geometry"/>
+        </mxCell>
+        <mxCell id="sec3" value="&lt;b&gt;Управление замками и правами доступа&lt;/b&gt;&lt;br&gt;• Утечка — &lt;b&gt;критический&lt;/b&gt;: создаёт риск несанкционированного физического доступа.&lt;br&gt;• Искажение — &lt;b&gt;критический&lt;/b&gt;: права могут быть выданы не тем людям." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDEEEE;strokeColor=#B85450;fontSize=13;spacing=8;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="940" width="350" height="125" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e-center-public" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#82B366;strokeWidth=4;endArrow=none;" edge="1" parent="1" source="center" target="public"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-center-internal" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6C8EBF;strokeWidth=4;endArrow=none;" edge="1" parent="1" source="center" target="internal"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-center-confidential" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D6B656;strokeWidth=4;endArrow=none;" edge="1" parent="1" source="center" target="confidential"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-center-secret" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#B85450;strokeWidth=4;endArrow=none;" edge="1" parent="1" source="center" target="secret"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-pub1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#82B366;strokeWidth=2;endArrow=none;" edge="1" parent="1" source="public" target="pub1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-pub2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#82B366;strokeWidth=2;endArrow=none;" edge="1" parent="1" source="public" target="pub2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-int1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6C8EBF;strokeWidth=2;endArrow=none;" edge="1" parent="1" source="internal" target="int1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-int2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6C8EBF;strokeWidth=2;endArrow=none;" edge="1" parent="1" source="internal" target="int2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-int3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6C8EBF;strokeWidth=2;endArrow=none;" edge="1" parent="1" source="internal" target="int3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-conf1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#D6B656;strokeWidth=2;endArrow=none;" edge="1" parent="1" source="confidential" target="conf1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-conf2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#D6B656;strokeWidth=2;endArrow=none;" edge="1" parent="1" source="confidential" target="conf2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-conf3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#D6B656;strokeWidth=2;endArrow=none;" edge="1" parent="1" source="confidential" target="conf3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-sec1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#B85450;strokeWidth=2;endArrow=none;" edge="1" parent="1" source="secret" target="sec1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-sec2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#B85450;strokeWidth=2;endArrow=none;" edge="1" parent="1" source="secret" target="sec2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-sec3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#B85450;strokeWidth=2;endArrow=none;" edge="1" parent="1" source="secret" target="sec3"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
