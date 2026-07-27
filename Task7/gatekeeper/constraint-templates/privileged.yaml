@@ -1,0 +1,30 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8sdenyprivileged
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sDenyPrivileged
+      validation:
+        openAPIV3Schema:
+          type: object
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      code:
+        - engine: Rego
+          source:
+            version: "v1"
+            rego: |
+              package k8sdenyprivileged
+
+              containers contains c if { c := input.review.object.spec.containers[_] }
+              containers contains c if { c := input.review.object.spec.initContainers[_] }
+              containers contains c if { c := input.review.object.spec.ephemeralContainers[_] }
+
+              violation contains {"msg": msg} if {
+                c := containers[_]
+                c.securityContext.privileged == true
+                msg := sprintf("K8sDenyPrivileged: контейнер %q не должен быть privileged", [c.name])
+              }

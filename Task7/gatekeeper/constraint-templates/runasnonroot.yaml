@@ -1,0 +1,36 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8srequirerestrictedcontainer
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sRequireRestrictedContainer
+      validation:
+        openAPIV3Schema:
+          type: object
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      code:
+        - engine: Rego
+          source:
+            version: "v1"
+            rego: |
+              package k8srequirerestrictedcontainer
+
+              containers contains c if { c := input.review.object.spec.containers[_] }
+              containers contains c if { c := input.review.object.spec.initContainers[_] }
+              containers contains c if { c := input.review.object.spec.ephemeralContainers[_] }
+
+              violation contains {"msg": msg} if {
+                c := containers[_]
+                not c.securityContext.runAsNonRoot == true
+                msg := sprintf("K8sRequireRestrictedContainer: для контейнера %q требуется runAsNonRoot: true", [c.name])
+              }
+
+              violation contains {"msg": msg} if {
+                c := containers[_]
+                not c.securityContext.readOnlyRootFilesystem == true
+                msg := sprintf("K8sRequireRestrictedContainer: для контейнера %q требуется readOnlyRootFilesystem: true", [c.name])
+              }
